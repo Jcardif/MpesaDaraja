@@ -1,10 +1,30 @@
-﻿namespace Daraja.App
+﻿using Microsoft.Extensions.Configuration;
+using MpesaDaraja.Services;
+
+namespace Daraja.App
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+
+            var config = new ConfigurationBuilder()
+                .AddUserSecrets<Program>()
+                .Build();
+
+            var consumerKey = config["ConsumerKey"];
+            var consumerSecret = config["ConsumerSecret"];
+            var endpoint = config["EndPoint"];
+            var grantType = config["GrantType"];
+
+            var auth = new DarajaAuthService(endpoint, consumerKey, consumerSecret);
+
+            var token = await auth.GetTokenAsync();
+
+            Console.WriteLine(token.AccessToken);
+
         }
     }
+
+ 
 }

@@ -1,0 +1,44 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
+using MpesaDaraja.Models;
+using Newtonsoft.Json;
+
+namespace MpesaDaraja.Services
+{
+    public class DarajaAuthService
+    {
+        private string EndPoint { get; set; }
+        private string GrantType { get; set; }
+        private string ConsumerKey { get; set; }
+        private string ConsumerSecret { get; set; }
+
+
+        public DarajaAuthService(string endPoint, string consumerKey, string consumerSecret, string grantType= "client_credentials")
+        {
+            EndPoint=endPoint;
+            GrantType=grantType;
+            ConsumerKey=consumerKey;
+            ConsumerSecret=consumerSecret;
+        }
+
+        public async Task<DarajaToken?> GetTokenAsync()
+        {
+            var client=new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
+                Convert.ToBase64String(Encoding.UTF8.GetBytes($"{ConsumerKey}:{ConsumerSecret}")));
+
+            var response = await client.GetAsync($"{EndPoint}?grant_type={GrantType}");
+
+            if (!response.IsSuccessStatusCode) return null;
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return string.IsNullOrEmpty(content) ? null : JsonConvert.DeserializeObject<DarajaToken>(content);
+        }
+
+    }
+}
