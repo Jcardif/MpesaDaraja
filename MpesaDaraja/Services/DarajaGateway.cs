@@ -55,6 +55,10 @@ namespace MpesaDaraja.Services
             return null;
         }
 
+        public string GetStkPushPassword(long shortCode, string timestamp) =>
+            Convert.ToBase64String(Encoding.UTF8.GetBytes($"{shortCode} {ConsumerKey} {timestamp}"));
+
+
         public Task<DarajaClient?> RefreshTokenAsync()
         {
             throw new NotImplementedException();
@@ -64,5 +68,7 @@ namespace MpesaDaraja.Services
         {
             throw new NotImplementedException();
         }
+
+
     }
 }

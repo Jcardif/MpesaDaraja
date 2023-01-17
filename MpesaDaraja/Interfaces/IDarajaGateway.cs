@@ -12,6 +12,7 @@ namespace MpesaDaraja.Interfaces
         Task<DarajaClient?> GetDarajaClientAsync();
         Task<DarajaClient?> RefreshTokenAsync();
         bool IsTokenValid(string token);
+        string GetStkPushPassword(long shortCode, string timestamp);
 
     }
 }

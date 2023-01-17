@@ -41,5 +41,7 @@ namespace MpesaDaraja.Models
 
         [JsonProperty("TransactionDesc")]
         public string TransactionDesc { get; set; }
+
+
     }
 }

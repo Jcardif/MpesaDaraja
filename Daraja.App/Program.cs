@@ -34,7 +34,6 @@ namespace Daraja.App
             var stkData = new StkData();
 
 
-            stkData.TransactionDesc = "Payment of X";
 
             var result = await darajaClient.SendSTKPushAsync(stkData);
 
