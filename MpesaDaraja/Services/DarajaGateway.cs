@@ -16,14 +16,16 @@ namespace MpesaDaraja.Services
         private string GrantType { get; set; }
         private string ConsumerKey { get; set; }
         private string ConsumerSecret { get; set; }
+        private string PassKey { get; set; }
 
 
-        public DarajaGateway(string endPoint, string consumerKey, string consumerSecret, string grantType= "client_credentials")
+        public DarajaGateway(string endPoint, string consumerKey, string consumerSecret, string passKey, string grantType= "client_credentials")
         {
             EndPoint=endPoint;
             GrantType=grantType;
             ConsumerKey=consumerKey;
             ConsumerSecret=consumerSecret;
+            PassKey=passKey;
         }
 
         public async Task<DarajaClient?> GetDarajaClientAsync()
@@ -56,7 +58,7 @@ namespace MpesaDaraja.Services
         }
 
         public string GetStkPushPassword(long shortCode, string timestamp) =>
-            Convert.ToBase64String(Encoding.UTF8.GetBytes($"{shortCode} {ConsumerKey} {timestamp}"));
+            Convert.ToBase64String(Encoding.UTF8.GetBytes($"{shortCode}{PassKey}{timestamp}"));
 
 
         public Task<DarajaClient?> RefreshTokenAsync()
