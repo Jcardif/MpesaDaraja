@@ -17,9 +17,9 @@ namespace Daraja.App
             var endpoint = config["EndPoint"];
             var grantType = config["GrantType"];
 
-            var auth = new DarajaAuthService(endpoint, consumerKey, consumerSecret);
+            var auth = new DarajaGateway(endpoint, consumerKey, consumerSecret);
 
-            var token = await auth.GetTokenAsync();
+            var token = await auth.GetDarajaClientAsync();
 
             Console.WriteLine(token.AccessToken);
 
