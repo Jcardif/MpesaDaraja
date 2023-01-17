@@ -29,7 +29,13 @@ namespace MpesaDaraja.Interfaces
 
         void TokenRefreshed(string accessToken, long expiresIn);
 
-        Task<PushResult?> SendSTKPushAsync(StkData mpesaStkData, string endpoint= "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest");
+        /// <summary>
+        ///     Initiates online payment on behalf of a customer.
+        /// </summary>
+        /// <param name="mpesaStkData"></param>
+        /// <param name="endpoint">The default endpoint to make the request is the sandbox endpoint</param>
+        /// <returns></returns>
+        Task<PushResult?> SendStkPushAsync(StkData mpesaStkData, string endpoint= "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest");
 
     }
 }

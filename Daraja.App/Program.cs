@@ -53,7 +53,7 @@ namespace Daraja.App
 
             stkData.Password = darajaGateway.GetStkPushPassword(stkData.BusinessShortCode, stkData.Timestamp);
 
-            var result = await darajaClient.SendSTKPushAsync(stkData);
+            var result = await darajaClient.SendStkPushAsync(stkData);
 
             Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
         }

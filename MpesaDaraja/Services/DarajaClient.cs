@@ -1,9 +1,10 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using MpesaDaraja.Interfaces;
+using MpesaDaraja.Models;
 using Newtonsoft.Json;
 
-namespace MpesaDaraja.Models
+namespace MpesaDaraja.Services
 {
     public class DarajaClient : IDarajaClient
     {
@@ -13,7 +14,7 @@ namespace MpesaDaraja.Models
 
         public void TokenRefreshed(string accessToken, long expiresIn)
         {
-            AccessToken  = accessToken;
+            AccessToken = accessToken;
             ExpiresIn = expiresIn;
             ClientSetAuth();
         }
@@ -32,7 +33,7 @@ namespace MpesaDaraja.Models
 
         private void ClientSetAuth() => Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
 
-        public async Task<PushResult?> SendSTKPushAsync(StkData mpesaStkData, string endpoint = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest")
+        public async Task<PushResult?> SendStkPushAsync(StkData mpesaStkData, string endpoint = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest")
         {
             Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -45,7 +46,7 @@ namespace MpesaDaraja.Models
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                var pushResult=JsonConvert.DeserializeObject<PushResult>(content);
+                var pushResult = JsonConvert.DeserializeObject<PushResult>(content);
                 return pushResult;
             }
 

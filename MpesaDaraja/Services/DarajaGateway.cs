@@ -5,7 +5,6 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using MpesaDaraja.Interfaces;
-using MpesaDaraja.Models;
 using Newtonsoft.Json;
 
 namespace MpesaDaraja.Services
