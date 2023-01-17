@@ -1,28 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-
-using System.Globalization;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
+using System.Text;
 using MpesaDaraja.Interfaces;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace MpesaDaraja.Models
 {
     public class DarajaClient : IDarajaClient
     {
-        public string? AccessToken { get; set; }
-        public long ExpiresIn { get; set; }
-        public HttpClient Client { get; set; }
+        public string? AccessToken { get; private set; }
+        public long ExpiresIn { get; private set; }
+        public HttpClient Client { get; private set; }
+
+        public void TokenRefreshed(string accessToken, long expiresIn)
+        {
+            AccessToken  = accessToken;
+            ExpiresIn = expiresIn;
+            ClientSetAuth();
+        }
+
 
         public DarajaClient(string accessToken, long expiresIn)
         {
             AccessToken = accessToken;
             ExpiresIn = expiresIn;
 
+
             Client = new HttpClient();
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
+
+            ClientSetAuth();
         }
-        
+
+        private void ClientSetAuth() => Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
+
+        public async Task<PushResult?> SendSTKPushAsync(StkData mpesaStkData, string endpoint = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest")
+        {
+            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var data = JsonConvert.SerializeObject(mpesaStkData);
+
+            var stkContent = new StringContent(data, Encoding.UTF8, "application/json");
+
+            var response = await Client.PostAsync(endpoint, stkContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var pushResult=JsonConvert.DeserializeObject<PushResult>(content);
+                return pushResult;
+            }
+
+            //todo: handle when fails
+            return null;
+        }
     }
 }

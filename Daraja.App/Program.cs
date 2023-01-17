@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Runtime.InteropServices;
+using Microsoft.Extensions.Configuration;
+using MpesaDaraja.Models;
 using MpesaDaraja.Services;
+using Newtonsoft.Json;
 
 namespace Daraja.App
 {
@@ -17,14 +20,25 @@ namespace Daraja.App
             var endpoint = config["EndPoint"];
             var grantType = config["GrantType"];
 
-            var auth = new DarajaGateway(endpoint, consumerKey, consumerSecret);
+            var gateway = new DarajaGateway(endpoint, consumerKey, consumerSecret);
 
-            var token = await auth.GetDarajaClientAsync();
+            var darajaClient = await gateway.GetDarajaClientAsync();
 
-            Console.WriteLine(token.AccessToken);
+            if (darajaClient != null)
+                await MakeStkPush(darajaClient);
+        }
 
+        private static async Task MakeStkPush(DarajaClient darajaClient)
+        {
+
+            var stkData = new StkData();
+
+
+            stkData.TransactionDesc = "Payment of X";
+
+            var result = await darajaClient.SendSTKPushAsync(stkData);
+
+            Console.WriteLine(result);
         }
     }
-
- 
 }

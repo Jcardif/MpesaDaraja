@@ -4,12 +4,13 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using MpesaDaraja.Interfaces;
 using MpesaDaraja.Models;
 using Newtonsoft.Json;
 
 namespace MpesaDaraja.Services
 {
-    public class DarajaAuthService
+    public class DarajaGateway : IDarajaGateway
     {
         private string EndPoint { get; set; }
         private string GrantType { get; set; }
@@ -17,7 +18,7 @@ namespace MpesaDaraja.Services
         private string ConsumerSecret { get; set; }
 
 
-        public DarajaAuthService(string endPoint, string consumerKey, string consumerSecret, string grantType= "client_credentials")
+        public DarajaGateway(string endPoint, string consumerKey, string consumerSecret, string grantType= "client_credentials")
         {
             EndPoint=endPoint;
             GrantType=grantType;
@@ -25,7 +26,7 @@ namespace MpesaDaraja.Services
             ConsumerSecret=consumerSecret;
         }
 
-        public async Task<DarajaClient?> GetTokenAsync()
+        public async Task<DarajaClient?> GetDarajaClientAsync()
         {
             var client=new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
@@ -54,8 +55,14 @@ namespace MpesaDaraja.Services
             return null;
         }
 
+        public Task<DarajaClient?> RefreshTokenAsync()
+        {
+            throw new NotImplementedException();
+        }
 
-
-
+        public bool IsTokenValid(string token)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
