@@ -25,7 +25,7 @@ namespace MpesaDaraja.Services
             ConsumerSecret=consumerSecret;
         }
 
-        public async Task<DarajaToken?> GetTokenAsync()
+        public async Task<DarajaClient?> GetTokenAsync()
         {
             var client=new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
@@ -37,8 +37,25 @@ namespace MpesaDaraja.Services
 
             var content = await response.Content.ReadAsStringAsync();
 
-            return string.IsNullOrEmpty(content) ? null : JsonConvert.DeserializeObject<DarajaToken>(content);
+            if (!string.IsNullOrEmpty(content))
+            {
+                var data = JsonConvert.DeserializeObject<dynamic>(content);
+
+                // ToDO: Handle when null
+                string accessToken = data?["access_token"].ToString() ?? throw new InvalidOperationException();
+                long expiresIn = data?["expires_in"];
+
+
+                return new DarajaClient(accessToken, expiresIn);
+            }
+
+
+            // ToDo: handle when null
+            return null;
         }
+
+
+
 
     }
 }
