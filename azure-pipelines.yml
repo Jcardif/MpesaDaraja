@@ -10,6 +10,8 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
+name: 1.0.$(rev:.r)
+
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
@@ -36,10 +38,7 @@ steps:
   inputs:
     command: 'pack'
     packagesToPack: 'MpesaDaraja/*.csproj'
-    versioningScheme: $(Major).$(Minor).$(rev:.r)
-    majorVersion: '$(Major)'
-    minorVersion: '$(Minor)'
-    patchVersion: '$(Patch)'
+    versioningScheme: 'byBuildNumber'
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
