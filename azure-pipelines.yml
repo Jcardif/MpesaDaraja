@@ -17,10 +17,9 @@ variables:
   buildConfiguration: 'Release'
   Major: '1'
   Minor: '0'
-  Patch: '$(Rev:r)-beta'
 
 
-name: $(Major).$(Minor)$(Patch)
+name: $(Major).$(Minor)$(Rev:r)-beta
 
 steps:
 - task: NuGetToolInstaller@1
@@ -56,7 +55,7 @@ steps:
     action: 'create'
     target: '$(Build.SourceVersion)'
     tagSource: 'userSpecifiedTag'
-    tag: 'v$(Major).$(Minor).$(Patch)'
+    tag: 'v$(BUILD_BUILDNUMBER)'
     isPreRelease: true
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
