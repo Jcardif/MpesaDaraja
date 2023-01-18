@@ -5,9 +5,12 @@
 
 trigger:
 - master
+- azure-pipelines
 
 pool:
   vmImage: 'windows-latest'
+
+name: 1.0.$(Rev:r)-beta
 
 variables:
   solution: '**/*.sln'
@@ -27,7 +30,17 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet pack'
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'pack'
+    packagesToPack: 'MpesaDaraja/*.csproj'
+    versioningScheme: 'byBuildNumber'
+
+- task: NuGetCommand@2
+  displayName: 'NuGet push'
+  inputs:
+    command: push
+    nuGetFeedType: external
+    publishFeedCredentials: NugetStorePublishKey
+    
