@@ -5,6 +5,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UserSecretsId>61a45af8-32c8-4f38-a96c-dafafc0e4d59</UserSecretsId>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title> M-Pesa Daraja SDK 2.0</Title>
+    <PackageId>MpesaDarajaSDK</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Josh N</Authors>
+    <Company />
+    <Description>C# M-Pesa SDK leveraging the Daraja API 2.0 allowing easy integration of M-Pesa Payments into your Applications</Description>
+    <PackageProjectUrl>https://github.com/Jcardif/MpesaDaraja</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Jcardif/MpesaDaraja</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>mpesa;mpesa-api;safaricom;mpesa-sdk;daraja-api;stkpush;safaricom-mpesa;safaricom-daraja-api;safaricom-lipa</PackageTags>
+    <NeutralLanguage>en-KE</NeutralLanguage>
+    <PackageIcon>Assets\mpesa.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +26,29 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\mpesa.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
