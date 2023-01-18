@@ -11,12 +11,16 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-name: 1.0.$(Rev:r)-beta
-
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  Major: '1'
+  Minor: '0'
+  Patch: '$(Rev:r)-beta'
+
+
+name: $(Major).$(Minor)$(Patch)
 
 steps:
 - task: NuGetToolInstaller@1
@@ -44,4 +48,15 @@ steps:
     command: push
     nuGetFeedType: external
     publishFeedCredentials: NugetStorePublishKey
-    
+
+- task: GitHubRelease@1
+  inputs:
+    gitHubConnection: 'github connection'
+    repositoryName: 'Jcardif/MpesaDaraja'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'userSpecifiedTag'
+    tag: 'v$(Major).$(Minor).$(Patch)'
+    isPreRelease: true
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'
