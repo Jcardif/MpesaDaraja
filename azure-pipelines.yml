@@ -10,15 +10,12 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-name: 1.0.$(rev:.r)
+name: 1.0.$(Rev:r)-beta
 
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  Major: '1'
-  Minor: '1'
-  Patch: '0'
 
 steps:
 - task: NuGetToolInstaller@1
