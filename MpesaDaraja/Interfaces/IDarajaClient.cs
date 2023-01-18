@@ -25,6 +25,7 @@ namespace MpesaDaraja.Interfaces
         [JsonProperty("expires_in")]
         long ExpiresIn { get; }
 
+        //Inheritdoc
         HttpClient Client { get; }
 
         void TokenRefreshed(string accessToken, long expiresIn);
