@@ -36,7 +36,7 @@ steps:
   inputs:
     command: 'pack'
     packagesToPack: 'MpesaDaraja/*.csproj'
-    versioningScheme: byPrereleaseNumber
+    versioningScheme: $(Major).$(Minor).$(rev:.r)
     majorVersion: '$(Major)'
     minorVersion: '$(Minor)'
     patchVersion: '$(Patch)'
