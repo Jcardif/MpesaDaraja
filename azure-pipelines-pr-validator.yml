@@ -3,12 +3,11 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger: none
+pr: 
+    - master
 
 pool:
   vmImage: 'windows-latest'
-
-name: 1.0.$(Rev:r)-beta
 
 variables:
   solution: '**/*.sln'
