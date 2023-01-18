@@ -14,8 +14,10 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  Major: '1'
-  Minor: '0'
+  major: '1'
+  minor: '0'
+  revision: $[counter(variables['minor'], 1)] #this will get reset when minor gets bumped. The number after Counter is the seed number (in my case, I started at 1).
+  app_version: '$(major).$(minor).$(revision)'
 
 steps:
 - task: NuGetToolInstaller@1
@@ -36,7 +38,7 @@ steps:
     command: pack
     packagesToPack: 'MpesaDaraja/*.csproj'
     versioningScheme: byEnvVar
-    versionEnvVar: '$(Major).$(Minor)-beta'
+    versionEnvVar: '$(app_version)'
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
