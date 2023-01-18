@@ -19,7 +19,7 @@ variables:
   Minor: '0'
 
 
-name: $(Major).$(Minor)$(Rev:r)-beta
+name: $(Major).$(Minor).$(Rev:r)-beta
 
 steps:
 - task: NuGetToolInstaller@1
