@@ -14,17 +14,8 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  major: '1'
-  minor: '0'
-  revision: $[counter(variables['minor'], 1)] #this will get reset when minor gets bumped. The number after Counter is the seed number (in my case, I started at 1).
-  nupkgVersion: '$(major).$(minor).$(revision)'
 
 steps:
-
-- task: PowerShell@2
-  inputs:
-    targetType: 'inline'
-    script: 'Write-Host ("##vso[task.setvariable variable=nupkgVersion]$env:nupkgVersion")'
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -40,10 +31,9 @@ steps:
 - task: DotNetCoreCLI@2
   displayName: 'dotnet pack'
   inputs:
-    command: pack
+    command: 'pack'
     packagesToPack: 'MpesaDaraja/*.csproj'
-    versioningScheme: byEnvVar
-    versionEnvVar: '$(app_version)'
+    versioningScheme: 'byBuildNumber'
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
