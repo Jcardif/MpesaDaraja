@@ -27,7 +27,18 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet pack'
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: pack
+    packagesToPack: 'MpesaDaraja/*.csproj'
+    versioningScheme: byEnvVar
+    versionEnvVar: '$(Build.BuildNumber)'
+
+- task: NuGetCommand@2
+  displayName: 'NuGet push'
+  inputs:
+    command: push
+    nuGetFeedType: external
+    publishFeedCredentials: NugetStorePublishKey
+    
