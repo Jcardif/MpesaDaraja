@@ -36,7 +36,7 @@ steps:
     command: pack
     packagesToPack: 'MpesaDaraja/*.csproj'
     versioningScheme: byEnvVar
-    versionEnvVar: '$(Major).$(Minor).$(Rev:r)-beta'
+    versionEnvVar: '$(Major).$(Minor)-beta'
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
