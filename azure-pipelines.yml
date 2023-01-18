@@ -13,6 +13,8 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  Major: '1'
+  Minor: '0'
 
 steps:
 - task: NuGetToolInstaller@1
@@ -33,7 +35,7 @@ steps:
     command: pack
     packagesToPack: 'MpesaDaraja/*.csproj'
     versioningScheme: byEnvVar
-    versionEnvVar: '$(Build.BuildNumber)'
+    versionEnvVar: '$(Major).$(Minor).$(Rev:r)-beta'
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
