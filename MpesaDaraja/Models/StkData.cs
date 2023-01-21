@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace MpesaDaraja.Models
 {
+    /// <summary>
+    ///     Defines the class for initiating online payment on behalf of a customer.
+    /// </summary>
     public class StkData
     {
         /// <summary>
@@ -77,6 +80,9 @@ namespace MpesaDaraja.Models
         [JsonProperty("TransactionDesc")]
         public string? TransactionDesc { get; set; }
 
+        /// <summary>
+        ///     Creates an instance of the <see cref="StkData"/> class
+        /// </summary>
         public StkData()
         {
             Timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");

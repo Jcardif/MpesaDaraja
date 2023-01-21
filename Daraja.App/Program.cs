@@ -22,12 +22,15 @@ namespace Daraja.App
             var grantType = config["GrantType"];
             var passKey = config["PassKey"];
 
-            var gateway = new DarajaGateway(endpoint, consumerKey, consumerSecret, passKey);
+            if (endpoint != null && consumerKey != null && consumerSecret != null && passKey != null)
+            {
+                var gateway = new DarajaGateway(endpoint, consumerKey, consumerSecret, passKey);
 
-            var darajaClient = await gateway.GetDarajaClientAsync();
+                var darajaClient = await gateway.GetDarajaClientAsync();
 
-            if (darajaClient != null)
-                await MakeStkPush(gateway, darajaClient);
+                if (darajaClient != null)
+                    await MakeStkPush(gateway, darajaClient);
+            }
         }
 
         private static async Task MakeStkPush(DarajaGateway darajaGateway, DarajaClient darajaClient)
