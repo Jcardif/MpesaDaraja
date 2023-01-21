@@ -39,7 +39,6 @@ namespace Daraja.App
             var stkData = new StkData
             {
                 BusinessShortCode = 174379,
-                Timestamp = "20230116043457",
                 TransactionType = "CustomerPayBillOnline",
                 Amount = 1,
                 PartyA = receiver,

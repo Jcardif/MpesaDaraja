@@ -48,10 +48,13 @@ To make an online payment on behalf of the customer:
     ```
 - Get the password that is used= for encrypting the request sent
 
-```C#
-stkData.Password = darajaGateway.GetStkPushPassword(stkData.BusinessShortCode, stkData.Timestamp);
-```
-``
+    ```C#
+    stkData.Password = darajaGateway.GetStkPushPassword(stkData.BusinessShortCode, stkData.Timestamp);
+    ```
+- Make the STK Push
+    ```C#
+    var result = await darajaClient.SendStkPushAsync(stkData);
+    ```
 
 # Find this repository useful? :heart:
 Support it by joining [stargazers](https://github.com/Jcardif/MpesaDaraja/stargazers) for this repository. 

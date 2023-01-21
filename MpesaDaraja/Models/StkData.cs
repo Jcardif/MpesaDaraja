@@ -22,7 +22,7 @@ namespace MpesaDaraja.Models
         public string? Password { get; set; }
 
         /// <summary>
-        ///     This is the Timestamp of the transaction, normally in the format of YEAR+MONTH+DATE+HOUR+MINUTE+SECOND (YYYYMMDDHHMMSS)
+        ///     This is the Timestamp of the transaction, normally in the format of YEAR+MONTH+DATE+HOUR+MINUTE+SECOND (yyyyMMddHHmmss)
         ///     Each part should be at least two digits apart from the year which takes four digits.
         /// </summary>
         [JsonProperty("Timestamp")]
@@ -77,6 +77,9 @@ namespace MpesaDaraja.Models
         [JsonProperty("TransactionDesc")]
         public string? TransactionDesc { get; set; }
 
-
+        public StkData()
+        {
+            Timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+        }
     }
 }

@@ -6,12 +6,19 @@ using Newtonsoft.Json;
 
 namespace MpesaDaraja.Services
 {
+    /// <inheritdoc />
     public class DarajaClient : IDarajaClient
     {
+        /// <inheritdoc />
         public string? AccessToken { get; private set; }
+
+        /// <inheritdoc />
         public long ExpiresIn { get; private set; }
+
+        /// <inheritdoc />
         public HttpClient Client { get; private set; }
 
+        /// <inheritdoc />
         public void TokenRefreshed(string accessToken, long expiresIn)
         {
             AccessToken = accessToken;
@@ -20,6 +27,11 @@ namespace MpesaDaraja.Services
         }
 
 
+        /// <summary>
+        ///     Initiates an instance of the <see cref="DarajaClient"/> class
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <param name="expiresIn"></param>
         public DarajaClient(string accessToken, long expiresIn)
         {
             AccessToken = accessToken;
@@ -33,6 +45,7 @@ namespace MpesaDaraja.Services
 
         private void ClientSetAuth() => Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
 
+        /// <inheritdoc />
         public async Task<PushResult?> SendStkPushAsync(StkData mpesaStkData, string endpoint = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest")
         {
             Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

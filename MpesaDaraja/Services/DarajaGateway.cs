@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace MpesaDaraja.Services
 {
+    /// <inheritdoc />
     public class DarajaGateway : IDarajaGateway
     {
         private string EndPoint { get; set; }
@@ -18,15 +19,26 @@ namespace MpesaDaraja.Services
         private string PassKey { get; set; }
 
 
-        public DarajaGateway(string endPoint, string consumerKey, string consumerSecret, string passKey, string grantType= "client_credentials")
+        /// <summary>
+        ///     Initialise an instance of the <see cref="DarajaGateway"/> class
+        /// </summary>
+        /// <param name="consumerKey"></param>
+        /// <param name="consumerSecret"></param>
+        /// <param name="passKey"></param>
+        /// <param name="inProduction"></param>
+        /// <param name="grantType"></param>
+        public DarajaGateway( string consumerKey, string consumerSecret, string passKey, bool inProduction,  string grantType= "client_credentials")
         {
-            EndPoint=endPoint;
+            EndPoint = inProduction
+                ? "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+                : "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
             GrantType=grantType;
             ConsumerKey=consumerKey;
             ConsumerSecret=consumerSecret;
             PassKey=passKey;
         }
 
+        /// <inheritdoc />
         public async Task<DarajaClient?> GetDarajaClientAsync()
         {
             var client=new HttpClient();
@@ -35,36 +47,44 @@ namespace MpesaDaraja.Services
 
             var response = await client.GetAsync($"{EndPoint}?grant_type={GrantType}");
 
-            if (!response.IsSuccessStatusCode) return null;
-
-            var content = await response.Content.ReadAsStringAsync();
-
-            if (!string.IsNullOrEmpty(content))
+            if (response.IsSuccessStatusCode)
             {
-                var data = JsonConvert.DeserializeObject<dynamic>(content);
+                var content = await response.Content.ReadAsStringAsync();
 
-                // ToDO: Handle when null
-                string accessToken = data?["access_token"].ToString() ?? throw new InvalidOperationException();
-                long expiresIn = data?["expires_in"];
+                if (!string.IsNullOrEmpty(content))
+                {
+                    var data = JsonConvert.DeserializeObject<dynamic>(content);
+
+                    // ToDO: Handle when null
+                    string accessToken = data?["access_token"].ToString() ?? throw new InvalidOperationException();
+                    long expiresIn = data?["expires_in"];
 
 
-                return new DarajaClient(accessToken, expiresIn);
+                    return new DarajaClient(accessToken, expiresIn);
+                }
+
+
+                // ToDo: handle when null
+                return null;
             }
 
+            // handle when status code is not success
+            throw new NotImplementedException(await response.Content.ReadAsStringAsync());
 
-            // ToDo: handle when null
-            return null;
         }
 
+        /// <inheritdoc />
         public string GetStkPushPassword(long shortCode, string timestamp) =>
             Convert.ToBase64String(Encoding.UTF8.GetBytes($"{shortCode}{PassKey}{timestamp}"));
 
 
+        /// <inheritdoc />
         public Task<DarajaClient?> RefreshTokenAsync()
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc />
         public bool IsTokenValid(string token)
         {
             throw new NotImplementedException();

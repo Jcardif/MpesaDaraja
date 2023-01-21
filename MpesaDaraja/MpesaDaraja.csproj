@@ -18,6 +18,7 @@
     <PackageTags>mpesa;mpesa-api;safaricom;mpesa-sdk;daraja-api;stkpush;safaricom-mpesa;safaricom-daraja-api;safaricom-lipa</PackageTags>
     <NeutralLanguage>en-KE</NeutralLanguage>
     <PackageIcon>Assets\mpesa.png</PackageIcon>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

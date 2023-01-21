@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace MpesaDaraja.Models
 {
+    /// <summary>
+    ///     Result after initiating an stk push
+    /// </summary>
     public class PushResult
     {
         /// <summary>
