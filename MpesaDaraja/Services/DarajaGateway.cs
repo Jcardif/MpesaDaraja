@@ -39,7 +39,7 @@ namespace MpesaDaraja.Services
         }
 
         /// <inheritdoc />
-        public async Task<DarajaClient?> GetDarajaClientAsync()
+        public async Task<DarajaClient?> GetDarajaClientAsync(bool isInProduction)
         {
             var client=new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
@@ -60,7 +60,7 @@ namespace MpesaDaraja.Services
                     long expiresIn = data?["expires_in"];
 
 
-                    return new DarajaClient(accessToken, expiresIn);
+                    return new DarajaClient(accessToken, expiresIn, isInProduction);
                 }
 
 

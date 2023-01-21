@@ -10,8 +10,9 @@ namespace MpesaDaraja.Interfaces
         /// <summary>
         ///     Get the <see cref="DarajaClient"/>
         /// </summary>
+        /// <param name="isInProduction">Is the API usage in production (value true) or sandbox (value false)</param>
         /// <returns><see cref="DarajaClient"/></returns>
-        Task<DarajaClient?> GetDarajaClientAsync();
+        Task<DarajaClient?> GetDarajaClientAsync(bool isInProduction);
 
         /// <summary>
         ///     Refresh the access token after expiry
