@@ -47,7 +47,7 @@ namespace MpesaDaraja.Interfaces
         /// <param name="pushResponse">Response from initiating the STK Push</param>
         /// <param name="stkData">The <see cref="StkData"/> object used to initiate the stk push</param>
         /// <returns></returns>
-        Task<(bool isCompleted, PushQueryResponse response)> QueryStkPushStatus(PushResponse pushResponse,
+        Task<(bool isCompleted, PushQueryResponse? pushQueryResponse)> QueryStkPushStatus(PushResponse pushResponse,
             StkData stkData);
 
     }

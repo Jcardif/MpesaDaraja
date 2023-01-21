@@ -10,7 +10,7 @@ namespace MpesaDaraja.Models
     /// <summary>
     ///     Result after initiating an stk push
     /// </summary>
-    public class PushResult
+    public class PushResponse
     {
         /// <summary>
         ///     This is a global unique Identifier for any submitted payment request.
