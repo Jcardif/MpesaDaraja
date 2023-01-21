@@ -8,9 +8,6 @@ using MpesaDaraja.Models;
 
 namespace MpesaDaraja.Interfaces
 {
-
-    // todo : handle nulls
-
     internal interface IDarajaClient
     {
         /// <summary>
@@ -25,18 +22,33 @@ namespace MpesaDaraja.Interfaces
         [JsonProperty("expires_in")]
         long ExpiresIn { get; }
 
-        //Inheritdoc
+        /// <summary>
+        ///  Client to handle http requests to the daraja API
+        /// </summary>
         HttpClient Client { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <param name="expiresIn"></param>
         void TokenRefreshed(string accessToken, long expiresIn);
 
         /// <summary>
         ///     Initiates online payment on behalf of a customer.
         /// </summary>
         /// <param name="mpesaStkData"></param>
-        /// <param name="endpoint">The default endpoint to make the request is the sandbox endpoint</param>
         /// <returns></returns>
-        Task<PushResult?> SendStkPushAsync(StkData mpesaStkData, string endpoint= "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest");
+        Task<PushResponse?> SendStkPushAsync(StkData mpesaStkData);
+
+        /// <summary>
+        ///     Check the status of an Online M-Pesa Payment.
+        /// </summary>
+        /// <param name="pushResponse">Response from initiating the STK Push</param>
+        /// <param name="stkData">The <see cref="StkData"/> object used to initiate the stk push</param>
+        /// <returns></returns>
+        Task<(bool isCompleted, PushQueryResponse response)> QueryStkPushStatus(PushResponse pushResponse,
+            StkData stkData);
 
     }
 }

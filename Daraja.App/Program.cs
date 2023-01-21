@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Microsoft.Extensions.Configuration;
+using MpesaDaraja;
 using MpesaDaraja.Models;
 using MpesaDaraja.Services;
 using Newtonsoft.Json;
@@ -31,25 +32,22 @@ namespace Daraja.App
 
         private static async Task MakeStkPush(DarajaGateway darajaGateway, DarajaClient darajaClient)
         {
-
-            var stkData = new StkData();
-
-            stkData.BusinessShortCode = 174379;
-            
-            stkData.Timestamp = "20230116043457";
-            stkData.TransactionType = "CustomerPayBillOnline";
-            stkData.Amount = 1;
-
             Console.WriteLine("Receiver for the stk push");
-            var receiver= Convert.ToInt64(Console.ReadLine());
+            var receiver = Convert.ToInt64(Console.ReadLine());
 
-            stkData.PartyA = receiver;
-            stkData.PartyB = 174379;
 
-            stkData.PhoneNumber = receiver;
-            stkData.CallBackUrl = new Uri("https://mydomain.com/path");
-            stkData.AccountReference = "CompanyXLTD";
-            stkData.TransactionDesc = "Payment of X";
+            var stkData = new StkData
+            {
+                BusinessShortCode = 174379,
+                TransactionType = "CustomerPayBillOnline",
+                Amount = 1,
+                PartyA = receiver,
+                PartyB = 174379,
+                PhoneNumber = receiver,
+                CallBackUrl = new Uri("https://mydomain.com/path"),
+                AccountReference = "CompanyXLTD",
+                TransactionDesc = "Payment of X"
+            };
 
             stkData.Password = darajaGateway.GetStkPushPassword(stkData.BusinessShortCode, stkData.Timestamp);
 
