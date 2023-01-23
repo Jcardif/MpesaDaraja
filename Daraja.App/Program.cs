@@ -22,15 +22,18 @@ namespace Daraja.App
             var grantType = config["GrantType"];
             var passKey = config["PassKey"];
 
-            if (endpoint != null && consumerKey != null && consumerSecret != null && passKey != null)
-            {
-                var gateway = new DarajaGateway(endpoint, consumerKey, consumerSecret, passKey);
+            if (endpoint == null || consumerKey == null || consumerSecret == null || passKey == null)
+                    return;
 
-                var darajaClient = await gateway.GetDarajaClientAsync();
+            var gateway = new DarajaGateway(consumerKey, consumerSecret, passKey, false);
 
-                if (darajaClient != null)
-                    await MakeStkPush(gateway, darajaClient);
-            }
+            var darajaClient = await gateway.GetDarajaClientAsync(false);
+
+            if (darajaClient == null)
+                return;
+
+            await MakeStkPush(gateway, darajaClient);
+
         }
 
         private static async Task MakeStkPush(DarajaGateway darajaGateway, DarajaClient darajaClient)
@@ -54,9 +57,21 @@ namespace Daraja.App
 
             stkData.Password = darajaGateway.GetStkPushPassword(stkData.BusinessShortCode, stkData.Timestamp);
 
-            var result = await darajaClient.SendStkPushAsync(stkData);
+            var pushResponse = await darajaClient.SendStkPushAsync(stkData);
 
-            Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+            Console.WriteLine(JsonConvert.SerializeObject(pushResponse, Formatting.Indented));
+            if(pushResponse is null ) { return;}
+
+            var isCompleted = false;
+            PushQueryResponse? pushQueryResponse = new PushQueryResponse();
+
+            while (!isCompleted)
+            {
+                (isCompleted, pushQueryResponse) = await darajaClient.QueryStkPushStatus(pushResponse, stkData);
+                Console.WriteLine("The transaction is being processed");
+            }
+
+            Console.WriteLine(JsonConvert.SerializeObject(pushQueryResponse, Formatting.Indented));
         }
     }
 }
