@@ -30,8 +30,8 @@ namespace MpesaDaraja.Services
         public DarajaGateway( string consumerKey, string consumerSecret, string passKey, bool inProduction,  string grantType= "client_credentials")
         {
             EndPoint = inProduction
-                ? "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
-                : "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
+                ? $"https://api.safaricom.co.ke/oauth/v1/generate"
+                : $"https://sandbox.safaricom.co.ke/oauth/v1/generate";
             GrantType=grantType;
             ConsumerKey=consumerKey;
             ConsumerSecret=consumerSecret;

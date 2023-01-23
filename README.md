@@ -22,39 +22,46 @@ using MpesaDaraja.Services;
 The package need to be configured with your [Daraja App Credentials](https://developer.safaricom.co.ke/MyApps) (Consumer Secret, consumerKey and your pass key)
 
 ```C#
-var gateway = new DarajaGateway(endpoint, consumerKey consumerSecret, passKey);
+var gateway = new DarajaGateway(consumerKey, consumerSecret, passKey, false);
 
-var darajaClient = await gateway.GetDarajaClientAsync();
+var darajaClient = await gateway.GetDarajaClientAsync(false);
 ```
 The ```DarajaGateway``` authenticates with the daraja api to get you a timebound access token which is used to create the ```Darajalient``` which you use to accesss the various [Daraja APIs](https://developer.safaricom.co.ke/APIs)
 
 # Make an STK Push (M-Pesa Express)
 To make an online payment on behalf of the customer:
-- create an ```STKData``` object
-    ```C#
-        var stkData = new StkData
-        {
-            BusinessShortCode = 174379,
-            Timestamp = "20230116043457",
-            TransactionType = "CustomerPayBillOnline",
-            Amount = 1,
-            PartyA = receiver,
-            PartyB = 174379,
-            PhoneNumber = receiver,
-            CallBackUrl = new Uri("https://mydomain.com/path"),
-            AccountReference = "CompanyXLTD",
-            TransactionDesc = "Payment of X"
-        };
-    ```
-- Get the password that is used= for encrypting the request sent
 
-    ```C#
-    stkData.Password = darajaGateway.GetStkPushPassword(stkData.BusinessShortCode, stkData.Timestamp);
-    ```
-- Make the STK Push
-    ```C#
-    var result = await darajaClient.SendStkPushAsync(stkData);
-    ```
+Create an ```STKData``` object
+
+```C#
+var stkData = new StkData
+{
+    BusinessShortCode = 174379,
+    Timestamp = "20230116043457",
+    TransactionType = "CustomerPayBillOnline",
+    Amount = 1,
+    PartyA = receiver,
+    PartyB = 174379,
+    PhoneNumber = receiver,
+    CallBackUrl = new Uri("https://mydomain.com/path"),
+    AccountReference = "CompanyXLTD",
+    TransactionDesc = "Payment of X"
+};
+```
+Get the password that is used= for encrypting the request sent
+
+```C#
+stkData.Password = darajaGateway.GetStkPushPassword(stkData.BusinessShortCode, stkData.Timestamp);
+```
+Make the STK Push
+```C#
+var result = await darajaClient.SendStkPushAsync(stkData);
+```
+Query the stus of the stk push
+```C#
+var (isCompleted, pushQueryResponse) = await darajaClient.QueryStkPushStatus(pushResponse, stkData);
+```
+
 
 # Find this repository useful? :heart:
 Support it by joining [stargazers](https://github.com/Jcardif/MpesaDaraja/stargazers) for this repository. 
