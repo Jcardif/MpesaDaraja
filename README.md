@@ -26,7 +26,7 @@ var gateway = new DarajaGateway(consumerKey, consumerSecret, passKey, false);
 
 var darajaClient = await gateway.GetDarajaClientAsync(false);
 ```
-The ```DarajaGateway``` authenticates with the daraja api to get you a timebound access token which is used to create the ```Darajalient``` which you use to accesss the various [Daraja APIs](https://developer.safaricom.co.ke/APIs)
+The ```DarajaGateway``` authenticates with the daraja api to get you a timebound access token which is used to create the ```DarajaClient``` which you use to accesss the various [Daraja APIs](https://developer.safaricom.co.ke/APIs)
 
 # Make an STK Push (M-Pesa Express)
 To make an online payment on behalf of the customer:
@@ -48,7 +48,7 @@ var stkData = new StkData
     TransactionDesc = "Payment of X"
 };
 ```
-Get the password that is used= for encrypting the request sent
+Get the password that is used for encrypting the request sent
 
 ```C#
 stkData.Password = darajaGateway.GetStkPushPassword(stkData.BusinessShortCode, stkData.Timestamp);
@@ -57,7 +57,7 @@ Make the STK Push
 ```C#
 var result = await darajaClient.SendStkPushAsync(stkData);
 ```
-Query the stus of the stk push
+Query the status of the stk push
 ```C#
 var (isCompleted, pushQueryResponse) = await darajaClient.QueryStkPushStatus(pushResponse, stkData);
 ```
