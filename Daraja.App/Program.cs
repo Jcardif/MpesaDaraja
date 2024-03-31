@@ -18,11 +18,10 @@ namespace Daraja.App
 
             var consumerKey = config["ConsumerKey"];
             var consumerSecret = config["ConsumerSecret"];
-            var endpoint = config["EndPoint"];
             var grantType = config["GrantType"];
             var passKey = config["PassKey"];
 
-            if (endpoint == null || consumerKey == null || consumerSecret == null || passKey == null)
+            if (consumerKey == null || consumerSecret == null || passKey == null)
                     return;
 
             var gateway = new DarajaGateway(consumerKey, consumerSecret, passKey, false);
