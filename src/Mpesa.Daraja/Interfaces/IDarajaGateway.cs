@@ -1,6 +1,6 @@
-﻿using MpesaDaraja.Services;
+﻿using Mpesa.Daraja.Services;
 
-namespace MpesaDaraja.Interfaces
+namespace Mpesa.Daraja.Interfaces
 {
     /// <summary>
     ///     Handles Access to the Daraja API

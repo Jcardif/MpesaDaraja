@@ -1,11 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
-namespace MpesaDaraja.Models
+namespace Mpesa.Daraja.Models
 {
     /// <summary>
     ///     Result after initiating an stk push
@@ -15,32 +10,32 @@ namespace MpesaDaraja.Models
         /// <summary>
         ///     This is a global unique Identifier for any submitted payment request.
         /// </summary>
-        [JsonProperty("MerchantRequestID")]
+        [JsonPropertyName("MerchantRequestID")]
         public string? MerchantRequestId { get; set; }
 
         /// <summary>
         ///     This is a global unique identifier of the processed checkout transaction request.
         /// </summary>
-        [JsonProperty("CheckoutRequestID")]
+        [JsonPropertyName("CheckoutRequestID")]
         public string? CheckoutRequestId { get; set; }
 
         /// <summary>
-        ///     This is a Numeric status code that indicates the status of the transaction submission. 0 means successful submission and any other code means an error occurred. 
+        ///     This is a Numeric status code that indicates the status of the transaction submission. 0 means successful submission and any other code means an error occurred.
         /// </summary>
-        [JsonProperty("ResponseCode")]
+        [JsonPropertyName("ResponseCode")]
         public long ResponseCode { get; set; }
 
         /// <summary>
         ///     Response description is an acknowledgment message from the API that gives the status of the request submission
         ///     usually maps to a specific ResponseCode value. It can be a Success submission message or an error description.
         /// </summary>
-        [JsonProperty("ResponseDescription")]
+        [JsonPropertyName("ResponseDescription")]
         public string? ResponseDescription { get; set; }
 
         /// <summary>
         ///     This is a message that your system can display to the Customer as an acknowledgement of the payment request submission.
         /// </summary>
-        [JsonProperty("CustomerMessage")]
+        [JsonPropertyName("CustomerMessage")]
         public string? CustomerMessage { get; set; }
     }
 }

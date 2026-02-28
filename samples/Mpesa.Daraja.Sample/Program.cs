@@ -1,28 +1,26 @@
-﻿using System.Runtime.InteropServices;
+using System.Text.Json;
 using Microsoft.Extensions.Configuration;
-using MpesaDaraja;
-using MpesaDaraja.Models;
-using MpesaDaraja.Services;
-using Newtonsoft.Json;
+using Mpesa.Daraja.Models;
+using Mpesa.Daraja.Services;
 
 namespace Daraja.App
 {
     internal class Program
     {
+        private static readonly JsonSerializerOptions s_jsonOptions = new() { WriteIndented = true };
+
         static async Task Main(string[] args)
         {
-
             var config = new ConfigurationBuilder()
                 .AddUserSecrets<Program>()
                 .Build();
 
             var consumerKey = config["ConsumerKey"];
             var consumerSecret = config["ConsumerSecret"];
-            var grantType = config["GrantType"];
             var passKey = config["PassKey"];
 
             if (consumerKey == null || consumerSecret == null || passKey == null)
-                    return;
+                return;
 
             var gateway = new DarajaGateway(consumerKey, consumerSecret, passKey, false);
 
@@ -32,14 +30,12 @@ namespace Daraja.App
                 return;
 
             await MakeStkPush(gateway, darajaClient);
-
         }
 
         private static async Task MakeStkPush(DarajaGateway darajaGateway, DarajaClient darajaClient)
         {
             Console.WriteLine("Receiver for the stk push");
             var receiver = Convert.ToInt64(Console.ReadLine());
-
 
             var stkData = new StkData
             {
@@ -54,12 +50,12 @@ namespace Daraja.App
                 TransactionDesc = "Payment of X"
             };
 
-            stkData.Password = darajaGateway.GetStkPushPassword(stkData.BusinessShortCode, stkData.Timestamp);
+            stkData.Password = darajaGateway.GetStkPushPassword(stkData.BusinessShortCode, stkData.Timestamp!);
 
             var pushResponse = await darajaClient.SendStkPushAsync(stkData);
 
-            Console.WriteLine(JsonConvert.SerializeObject(pushResponse, Formatting.Indented));
-            if(pushResponse is null ) { return;}
+            Console.WriteLine(JsonSerializer.Serialize(pushResponse, s_jsonOptions));
+            if (pushResponse is null) { return; }
 
             var isCompleted = false;
             PushQueryResponse? pushQueryResponse = new PushQueryResponse();
@@ -70,7 +66,7 @@ namespace Daraja.App
                 Console.WriteLine("The transaction is being processed");
             }
 
-            Console.WriteLine(JsonConvert.SerializeObject(pushQueryResponse, Formatting.Indented));
+            Console.WriteLine(JsonSerializer.Serialize(pushQueryResponse, s_jsonOptions));
         }
     }
 }

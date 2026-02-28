@@ -1,25 +1,17 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MpesaDaraja.Models;
+using Mpesa.Daraja.Models;
 
-namespace MpesaDaraja.Interfaces
+namespace Mpesa.Daraja.Interfaces
 {
     internal interface IDarajaClient
     {
         /// <summary>
         ///     Access token to access other APIs
         /// </summary>
-        [JsonProperty("access_token")]
         string? AccessToken { get; }
 
         /// <summary>
         ///    Token expiry time in seconds
         /// </summary>
-        [JsonProperty("expires_in")]
         long ExpiresIn { get; }
 
         /// <summary>
@@ -28,7 +20,7 @@ namespace MpesaDaraja.Interfaces
         HttpClient Client { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="accessToken"></param>
         /// <param name="expiresIn"></param>
@@ -49,6 +41,5 @@ namespace MpesaDaraja.Interfaces
         /// <returns></returns>
         Task<(bool isCompleted, PushQueryResponse? pushQueryResponse)> QueryStkPushStatus(PushResponse pushResponse,
             StkData stkData);
-
     }
 }

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
-using MpesaDaraja.Interfaces;
-using Newtonsoft.Json;
+using System.Text.Json;
+using Mpesa.Daraja.Interfaces;
 
-namespace MpesaDaraja.Services
+namespace Mpesa.Daraja.Services
 {
     /// <inheritdoc />
     public class DarajaGateway : IDarajaGateway
@@ -18,7 +14,6 @@ namespace MpesaDaraja.Services
         private string ConsumerSecret { get; set; }
         private string PassKey { get; set; }
 
-
         /// <summary>
         ///     Initialise an instance of the <see cref="DarajaGateway"/> class
         /// </summary>
@@ -27,21 +22,21 @@ namespace MpesaDaraja.Services
         /// <param name="passKey"></param>
         /// <param name="inProduction"></param>
         /// <param name="grantType"></param>
-        public DarajaGateway( string consumerKey, string consumerSecret, string passKey, bool inProduction,  string grantType= "client_credentials")
+        public DarajaGateway(string consumerKey, string consumerSecret, string passKey, bool inProduction, string grantType = "client_credentials")
         {
             EndPoint = inProduction
-                ? $"https://api.safaricom.co.ke/oauth/v1/generate"
-                : $"https://sandbox.safaricom.co.ke/oauth/v1/generate";
-            GrantType=grantType;
-            ConsumerKey=consumerKey;
-            ConsumerSecret=consumerSecret;
-            PassKey=passKey;
+                ? "https://api.safaricom.co.ke/oauth/v1/generate"
+                : "https://sandbox.safaricom.co.ke/oauth/v1/generate";
+            GrantType = grantType;
+            ConsumerKey = consumerKey;
+            ConsumerSecret = consumerSecret;
+            PassKey = passKey;
         }
 
         /// <inheritdoc />
         public async Task<DarajaClient?> GetDarajaClientAsync(bool isInProduction)
         {
-            var client=new HttpClient();
+            var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
                 Convert.ToBase64String(Encoding.UTF8.GetBytes($"{ConsumerKey}:{ConsumerSecret}")));
 
@@ -53,16 +48,17 @@ namespace MpesaDaraja.Services
 
                 if (!string.IsNullOrEmpty(content))
                 {
-                    var data = JsonConvert.DeserializeObject<dynamic>(content);
+                    using var doc = JsonDocument.Parse(content);
+                    var root = doc.RootElement;
 
-                    // ToDO: Handle when null
-                    string accessToken = data?["access_token"].ToString() ?? throw new InvalidOperationException();
-                    long expiresIn = data?["expires_in"];
-
+                    string accessToken = root.GetProperty("access_token").GetString()
+                        ?? throw new InvalidOperationException("access_token is null");
+                    long expiresIn = root.GetProperty("expires_in").TryGetInt64(out var exp)
+                        ? exp
+                        : long.Parse(root.GetProperty("expires_in").GetString()!);
 
                     return new DarajaClient(accessToken, expiresIn, isInProduction);
                 }
-
 
                 // ToDo: handle when null
                 return null;
@@ -70,13 +66,11 @@ namespace MpesaDaraja.Services
 
             // handle when status code is not success
             throw new NotImplementedException(await response.Content.ReadAsStringAsync());
-
         }
 
         /// <inheritdoc />
         public string GetStkPushPassword(long shortCode, string timestamp) =>
             Convert.ToBase64String(Encoding.UTF8.GetBytes($"{shortCode}{PassKey}{timestamp}"));
-
 
         /// <inheritdoc />
         public Task<DarajaClient?> RefreshTokenAsync()
@@ -89,7 +83,5 @@ namespace MpesaDaraja.Services
         {
             throw new NotImplementedException();
         }
-
-
     }
 }

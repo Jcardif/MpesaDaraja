@@ -1,11 +1,11 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
-using MpesaDaraja.Interfaces;
-using MpesaDaraja.Models;
-using Newtonsoft.Json;
+using System.Net.Http.Json;
+using System.Text.Json;
+using Mpesa.Daraja.Interfaces;
+using Mpesa.Daraja.Models;
 
-namespace MpesaDaraja.Services
+namespace Mpesa.Daraja.Services
 {
     /// <inheritdoc />
     public class DarajaClient : IDarajaClient
@@ -33,12 +33,10 @@ namespace MpesaDaraja.Services
             ExpiresIn = expiresIn;
             IsInProduction = isInProduction;
 
-
             Client = new HttpClient();
 
             InitialiseClient();
         }
-
 
         /// <inheritdoc />
         public void TokenRefreshed(string accessToken, long expiresIn)
@@ -61,17 +59,11 @@ namespace MpesaDaraja.Services
                 ? "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
                 : "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
 
-
-            var data = JsonConvert.SerializeObject(mpesaStkData);
-
-            var stkContent = new StringContent(data, Encoding.UTF8, "application/json");
-
-            var response = await Client.PostAsync(endpoint, stkContent);
+            var response = await Client.PostAsJsonAsync(endpoint, mpesaStkData);
 
             if (response.IsSuccessStatusCode)
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var pushResult = JsonConvert.DeserializeObject<PushResponse>(content);
+                var pushResult = await response.Content.ReadFromJsonAsync<PushResponse>();
                 return pushResult;
             }
 
@@ -90,7 +82,6 @@ namespace MpesaDaraja.Services
             if (stkData.Password == null || stkData.Timestamp == null || pushResponse.CheckoutRequestId == null)
                 throw new NotImplementedException("Method parameters are null");
 
-
             var stkQuery = new Dictionary<string, object>
             {
                 { "BusinessShortCode", stkData.BusinessShortCode },
@@ -99,22 +90,17 @@ namespace MpesaDaraja.Services
                 { "CheckoutRequestID", pushResponse.CheckoutRequestId }
             };
 
-            var data = JsonConvert.SerializeObject(stkQuery);
-            var queryContent = new StringContent(data, Encoding.UTF8, "application/json");
-
-            var response = await Client.PostAsync(endpoint, queryContent);
+            var response = await Client.PostAsJsonAsync(endpoint, stkQuery);
 
             if (response.IsSuccessStatusCode)
             {
-                var content=await response.Content.ReadAsStringAsync();
-                var pushQueryResponse = JsonConvert.DeserializeObject<PushQueryResponse>(content);
+                var pushQueryResponse = await response.Content.ReadFromJsonAsync<PushQueryResponse>();
                 return (true, pushQueryResponse);
             }
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<DarajaError>(content);
+                var error = await response.Content.ReadFromJsonAsync<DarajaError>();
 
                 if (error?.ErrorMessage == "The transaction is being processed")
                 {

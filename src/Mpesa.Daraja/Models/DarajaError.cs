@@ -1,34 +1,29 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
-namespace MpesaDaraja.Models
+namespace Mpesa.Daraja.Models
 {
     /// <summary>
-    ///     Error from daraja API when request is unsuccessful 
+    ///     Error from daraja API when request is unsuccessful
     /// </summary>
     public class DarajaError
     {
         /// <summary>
         ///     This is a unique requestID for the payment request
         /// </summary>
-        [JsonProperty("requestId")]
+        [JsonPropertyName("requestId")]
         public string? RequestId { get; set; }
 
         /// <summary>
         ///     This is a predefined code that indicates the reason for request failure. This are defined in the Response Error Details below.
         ///     The error codes maps to specific error message as illustrated in the Response Error Details below.
         /// </summary>
-        [JsonProperty("errorCode")]
+        [JsonPropertyName("errorCode")]
         public string? ErrorCode { get; set; }
 
         /// <summary>
         ///     This is a short descriptive message of the failure reason.
         /// </summary>
-        [JsonProperty("errorMessage")]
+        [JsonPropertyName("errorMessage")]
         public string? ErrorMessage { get; set; }
     }
 }
