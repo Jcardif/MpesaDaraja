@@ -1,0 +1,50 @@
+site_name: M-Pesa Daraja SDK
+site_description: C# M-Pesa SDK leveraging the Daraja API 3.0
+site_url: https://jcardif.github.io/MpesaDaraja/
+repo_url: https://github.com/Jcardif/MpesaDaraja
+repo_name: Jcardif/MpesaDaraja
+
+docs_dir: .
+site_dir: ../site
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - M-Pesa Express: mpesa-express.md
+  - Transaction Reversal: reversal.md
+  - Error Handling: error-handling.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables

@@ -1,28 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework />
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>M-Pesa Daraja SDK 2.0</Title>
+    <Title>M-Pesa Daraja SDK 3.0</Title>
     <PackageId>MpesaDarajaSDK</PackageId>
-    <Version>2.0.0</Version>
+    <Version>3.0.0</Version>
     <Authors>Josh N</Authors>
     <Company />
-    <Description>C# M-Pesa SDK leveraging the Daraja API 2.0 allowing easy integration of M-Pesa Payments into your Applications</Description>
+    <Description>C# M-Pesa SDK leveraging the Daraja API 3.0 allowing easy integration of M-Pesa Payments into your Applications</Description>
     <PackageProjectUrl>https://github.com/Jcardif/MpesaDaraja</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Jcardif/MpesaDaraja</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>mpesa;mpesa-api;safaricom;mpesa-sdk;daraja-api;stkpush;safaricom-mpesa;safaricom-daraja-api;safaricom-lipa</PackageTags>
     <NeutralLanguage>en-KE</NeutralLanguage>
-    <PackageIcon>Assets\mpesa.png</PackageIcon>
+    <PackageIcon>mpesa.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="Assets\mpesa.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="Assets\mpesa.png" Pack="true" PackagePath="" />
+
+    <EmbeddedResource Include="Assets\SandboxCertificate.cer" />
+    <EmbeddedResource Include="Assets\ProductionCertificate.cer" />
   </ItemGroup>
 
 </Project>

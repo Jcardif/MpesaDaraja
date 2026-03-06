@@ -6,8 +6,10 @@ using Mpesa.Daraja.Shared.Exceptions;
 
 namespace Mpesa.Daraja.Auth;
 
-/// <inheritdoc cref="IDarajaGateway" />
-public class DarajaGateway : IDarajaGateway, IDisposable
+/// <summary>
+///     The Entry point for all interactions with the Daraja API.
+/// </summary>
+public class DarajaGateway : IDisposable
 {
     /// <summary>
     ///     The Daraja client
@@ -43,7 +45,10 @@ public class DarajaGateway : IDarajaGateway, IDisposable
     }
 
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Initializes the Daraja API Token by making a request to the Daraja API.
+    /// </summary>
+    /// <exception cref="DarajaException"></exception>
     public async Task InitializeDarajaAsync()
     {
         var basicAuthToken = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_consumerKey}:{_consumerSecret}"));

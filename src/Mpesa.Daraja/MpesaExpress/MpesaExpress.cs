@@ -33,10 +33,10 @@ public class MpesaExpress : IMpesaExpress
         payload.Timestamp = timestamp;
         payload.Password = password;
 
-        await _gateway.EnsureAuthenticatedAsync();
-
         var jsonPayload = JsonSerializer.Serialize(payload);
         var httpContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+        await _gateway.EnsureAuthenticatedAsync();
 
         var response = await _gateway.HttpClient.PostAsync("mpesa/stkpush/v1/processrequest", httpContent);
         var content = await response.Content.ReadAsStringAsync();
