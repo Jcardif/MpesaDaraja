@@ -1,6 +1,6 @@
 # M-Pesa Express (STK Push)
 
-M-Pesa Express is a Merchant/Business initiated C2B (Customer to Business) payment. It sends a payment prompt to the customer's phone via USSD.
+Merchant-initiated C2B payment. Sends a USSD payment prompt to the customer's phone.
 
 ## Initiate STK Push
 
@@ -10,6 +10,7 @@ var mpesaExpress = new MpesaExpress(gateway, passKey);
 var payload = new MpesaExpressPayload
 {
     BusinessShortCode = 174379,
+    Passkey = passKey,
     TransactionType = TransactionType.CustomerPayBillOnline,
     Amount = 1,
     PartyA = "254708374149",
@@ -17,59 +18,68 @@ var payload = new MpesaExpressPayload
     PhoneNumber = "254708374149",
     CallBackURL = "https://mydomain.com/callback",
     AccountReference = "MyApp",
-    TransactionDesc = "Payment",
-    Passkey = passKey
+    TransactionDesc = "Payment"
 };
 
 var result = await mpesaExpress.InitiateStkPush(payload);
 
 if (result.IsSuccess)
 {
-    Console.WriteLine($"MerchantRequestID: {result.Value!.MerchantRequestID}");
-    Console.WriteLine($"CheckoutRequestID: {result.Value.CheckoutRequestID}");
+    Console.WriteLine($"CheckoutRequestID: {result.Value!.CheckoutRequestID}");
 }
 ```
 
 ## Payload Properties
 
-| Property | Description |
-|---|---|
-| `BusinessShortCode` | The M-PESA Shortcode (Paybill or Till number) |
-| `TransactionType` | `CustomerPayBillOnline` for Paybill, `CustomerBuyGoodsOnline` for Till |
-| `Amount` | Transaction amount |
-| `PartyA` | Phone number sending money (format: `2547XXXXXXXX`) |
-| `PartyB` | Organization receiving funds |
-| `PhoneNumber` | Phone number to receive the USSD prompt |
-| `CallBackURL` | URL for payment result notification |
-| `AccountReference` | Identifier shown to customer (max 12 characters) |
-| `TransactionDesc` | Additional info (max 13 characters) |
-| `Passkey` | Passkey for password encryption |
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `BusinessShortCode` | `int` | Yes | Paybill or Till number |
+| `Passkey` | `string` | Yes | Passkey from the Daraja portal |
+| `TransactionType` | `TransactionType` | Yes | `CustomerPayBillOnline` (Paybill) or `CustomerBuyGoodsOnline` (Till) |
+| `Amount` | `decimal` | Yes | Transaction amount |
+| `PartyA` | `string` | Yes | Phone number sending money (`2547XXXXXXXX`) |
+| `PartyB` | `string` | Yes | Organization receiving funds |
+| `PhoneNumber` | `string` | Yes | Phone number to receive the USSD prompt (`2547XXXXXXXX`) |
+| `CallBackURL` | `string` | Yes | URL for payment result notification |
+| `AccountReference` | `string` | Yes | Identifier shown to customer (max 12 chars) |
+| `TransactionDesc` | `string` | No | Additional info (max 13 chars) |
+
+`Password` and `Timestamp` are set automatically by the SDK.
 
 ## Query Transaction Status
-
-After initiating an STK Push, you can check its status:
 
 ```csharp
 var queryResult = await mpesaExpress.QueryStkPushStatus(
     businessShortCode: 174379,
-    checkoutRequestId: "ws_CO_191220191020363925"
+    checkoutRequestId: result.Value!.CheckoutRequestID
 );
 
 if (queryResult.IsSuccess)
 {
-    var response = queryResult.Value!;
-    Console.WriteLine($"ResultCode: {response.ResultCode}");
-    Console.WriteLine($"ResultDesc: {response.ResultDesc}");
+    Console.WriteLine($"ResultCode: {queryResult.Value!.ResultCode}");
+    Console.WriteLine($"ResultDesc: {queryResult.Value.ResultDesc}");
 }
 ```
 
-## Query Response Properties
+## Response Properties
+
+### STK Push Response
 
 | Property | Description |
 |---|---|
-| `ResponseCode` | Status of the request submission (`0` = success) |
+| `MerchantRequestID` | Unique ID from the API proxy |
+| `CheckoutRequestID` | Unique ID from M-PESA |
+| `ResponseCode` | `0` = successful submission |
 | `ResponseDescription` | Submission status message |
-| `MerchantRequestID` | Unique identifier from the API proxy |
-| `CheckoutRequestID` | Unique identifier from M-PESA |
-| `ResultCode` | Transaction processing status (`0` = success) |
+| `CustomerMessage` | Message for the customer |
+
+### Query Response
+
+| Property | Description |
+|---|---|
+| `ResponseCode` | `0` = successful submission |
+| `ResponseDescription` | Submission status message |
+| `MerchantRequestID` | Unique ID from the API proxy |
+| `CheckoutRequestID` | Unique ID from M-PESA |
+| `ResultCode` | `0` = successful processing |
 | `ResultDesc` | Processing result message |

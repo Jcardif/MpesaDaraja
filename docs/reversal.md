@@ -1,6 +1,6 @@
 # Transaction Reversal
 
-The Reversal API enables you to reverse a completed C2B (Customer to Business) M-Pesa transaction.
+Reverse a completed C2B M-Pesa transaction.
 
 ## Usage
 
@@ -23,45 +23,30 @@ var result = await reversal.ReverseTransactionAsync(payload);
 if (result.IsSuccess)
 {
     Console.WriteLine($"ConversationId: {result.Value!.ConversationId}");
-    Console.WriteLine($"ResponseDescription: {result.Value.ResponseDescription}");
 }
 ```
 
-## Security Credentials
-
-The SDK automatically generates the security credential by:
-
-1. Loading the correct M-Pesa public key certificate (sandbox or production) from embedded resources
-2. Encrypting the initiator password using RSA with PKCS#1 v1.5 padding
-3. Base64-encoding the result
-
-You only need to provide the plain-text `initiatorPassword` when constructing the `Reversal` instance.
+The SDK automatically generates the `SecurityCredential` by encrypting `initiatorPassword` with the M-Pesa public key certificate (sandbox or production, based on your gateway config) using RSA PKCS#1 v1.5.
 
 ## Payload Properties
 
-| Property | Description |
-|---|---|
-| `Initiator` | Username of the API user from the M-PESA portal |
-| `TransactionId` | M-PESA receipt number of the transaction to reverse |
-| `Amount` | Amount to reverse |
-| `ReceiverParty` | Organization shortcode |
-| `ResultUrl` | URL for the reversal result notification |
-| `QueueTimeOutUrl` | URL for timeout notification |
-| `Remarks` | Additional information (2-100 characters) |
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `Initiator` | `string` | Yes | API username from the M-PESA portal |
+| `TransactionId` | `string` | Yes | M-PESA receipt number to reverse |
+| `Amount` | `decimal` | Yes | Amount to reverse |
+| `ReceiverParty` | `long` | Yes | Organization shortcode |
+| `ResultUrl` | `Uri` | No | URL for reversal result notification |
+| `QueueTimeOutUrl` | `Uri` | No | URL for timeout notification |
+| `Remarks` | `string` | No | Additional info (2–100 chars) |
 
-## Fixed Properties
-
-| Property | Value | Description |
-|---|---|---|
-| `CommandId` | `TransactionReversal` | Always set to this value |
-| `RecieverIdentifierType` | `11` | Organization identifier type |
-| `SecurityCredential` | Auto-generated | Set automatically by the SDK |
+`CommandId` (`TransactionReversal`), `RecieverIdentifierType` (`11`), and `SecurityCredential` are set automatically.
 
 ## Response Properties
 
 | Property | Description |
 |---|---|
-| `OriginatorConversationId` | Unique identifier from M-PESA |
-| `ConversationId` | Global unique identifier for the request |
-| `ResponseCode` | Status code (`0` = success) |
+| `OriginatorConversationId` | Unique ID from M-PESA |
+| `ConversationId` | Global unique ID for the request |
+| `ResponseCode` | `0` = success |
 | `ResponseDescription` | Acknowledgment message |

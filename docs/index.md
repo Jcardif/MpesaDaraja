@@ -1,26 +1,23 @@
 # M-Pesa Daraja SDK
 
-C# M-Pesa SDK leveraging the Daraja API 3.0 for easy integration of M-Pesa Payments into .NET applications.
+A C# SDK for the Safaricom M-Pesa Daraja API 3.0. Supports .NET 8.0, 9.0, and 10.0.
+
+## Supported APIs
+
+- **M-Pesa Express (STK Push)** — Initiate payment prompts and query transaction status
+- **Transaction Reversal** — Reverse C2B transactions with automatic security credential generation
+- More APIs coming soon
 
 ## Features
 
-- **M-Pesa Express (STK Push)** - Initiate payment prompts and query transaction status
-- **Transaction Reversal** - Reverse completed C2B transactions with automatic security credential generation
-- **Sandbox & Production** - Switch environments with a single flag
-- **Result types** - All API calls return `DarajaResult<T>` for clean error handling
+- **Sandbox & Production** — Switch environments with a single constructor flag
+- **Result types** — All API calls return `DarajaResult<T>` for clean error handling
+- **Auto token refresh** — Tokens are refreshed automatically before expiry
 
-## Quick Start
+## Installation
 
 ```bash
 dotnet add package MpesaDarajaSDK
 ```
 
-```csharp
-using Mpesa.Daraja;
-using Mpesa.Daraja.Auth;
-
-using var gateway = new DarajaGateway(consumerKey, consumerSecret, isLive: false);
-await gateway.InitializeDarajaAsync();
-```
-
-See the [Getting Started](getting-started.md) guide for full setup instructions.
+Get started with the [setup guide](getting-started.md).

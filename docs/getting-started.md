@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- .NET 10.0 or later
+- .NET 8.0 or later
 - Safaricom Daraja API credentials ([register here](https://developer.safaricom.co.ke/))
 
 ## Installation
@@ -11,15 +11,7 @@
 dotnet add package MpesaDarajaSDK
 ```
 
-## Configuration
-
-You need three credentials from the [Daraja portal](https://developer.safaricom.co.ke/MyApps):
-
-- **Consumer Key**
-- **Consumer Secret**
-- **Pass Key** (for M-Pesa Express)
-
-### Initialize the Gateway
+## Initialize the Gateway
 
 ```csharp
 using Mpesa.Daraja;
@@ -29,11 +21,9 @@ using var gateway = new DarajaGateway(consumerKey, consumerSecret, isLive: false
 await gateway.InitializeDarajaAsync();
 ```
 
-Set `isLive: true` when deploying to production. This switches the base URL from the sandbox to the live Safaricom API.
+Set `isLive: true` for production. This switches the base URL from sandbox (`sandbox.safaricom.co.ke`) to live (`api.safaricom.co.ke`).
 
-### Token Management
-
-The SDK handles token refresh automatically. When you call any API method, it checks if the current token is still valid and re-authenticates if needed.
+The SDK refreshes tokens automatically — when you call any API method, it checks token validity and re-authenticates if needed.
 
 ## Next Steps
 
