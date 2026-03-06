@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [main, daraja-3]
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**/*.md'
 
 jobs:
   build-and-test:
@@ -29,3 +33,57 @@ jobs:
 
       - name: Test
         run: dotnet test --no-build --configuration Release --verbosity normal
+
+  publish:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Get version from csproj
+        id: version
+        run: |
+          VERSION=$(grep '<Version>' src/Mpesa.Daraja/Mpesa.Daraja.csproj | sed 's/.*<Version>\(.*\)<\/Version>.*/\1/')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check if tag already exists
+        id: check_tag
+        run: |
+          if git rev-parse "refs/tags/${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build
+        if: steps.check_tag.outputs.exists == 'false'
+        run: dotnet restore && dotnet build --no-restore --configuration Release
+
+      - name: Pack
+        if: steps.check_tag.outputs.exists == 'false'
+        run: dotnet pack src/Mpesa.Daraja/Mpesa.Daraja.csproj --no-build --configuration Release --output ./nupkgs
+
+      - name: Push to NuGet
+        if: steps.check_tag.outputs.exists == 'false'
+        run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: Create tag and GitHub Release
+        if: steps.check_tag.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ steps.version.outputs.tag }}" ./nupkgs/*.nupkg --generate-notes
