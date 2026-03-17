@@ -7,7 +7,6 @@ public class MpesaExpressPayloadTests
     private static MpesaExpressPayload CreateValidPayload() => new()
     {
         BusinessShortCode = 174379,
-        Passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919",
         TransactionType = TransactionType.CustomerPayBillOnline,
         Amount = 1,
         PartyA = "254708374149",
@@ -24,7 +23,6 @@ public class MpesaExpressPayloadTests
         var payload = CreateValidPayload();
 
         Assert.Equal(174379, payload.BusinessShortCode);
-        Assert.Equal("bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919", payload.Passkey);
         Assert.Equal(TransactionType.CustomerPayBillOnline, payload.TransactionType);
         Assert.Equal(1, payload.Amount);
         Assert.Equal("254708374149", payload.PartyA);
@@ -36,19 +34,19 @@ public class MpesaExpressPayloadTests
     }
 
     [Fact]
-    public void Password_DefaultIsNull()
+    public void Password_DefaultIsEmptyString()
     {
         var payload = CreateValidPayload();
 
-        Assert.Null(payload.Password);
+        Assert.Equal(string.Empty, payload.Password);
     }
 
     [Fact]
-    public void Timestamp_DefaultIsNull()
+    public void Timestamp_DefaultIsEmptyString()
     {
         var payload = CreateValidPayload();
 
-        Assert.Null(payload.Timestamp);
+        Assert.Equal(string.Empty, payload.Timestamp);
     }
 
     [Fact]
@@ -59,7 +57,7 @@ public class MpesaExpressPayloadTests
         var json = JsonSerializer.Serialize(payload);
 
         Assert.Contains("\"BusinessShortCode\"", json);
-        Assert.Contains("\"Passkey\"", json);
+        Assert.Contains("\"Password\"", json);
         Assert.Contains("\"TransactionType\"", json);
         Assert.Contains("\"Amount\"", json);
         Assert.Contains("\"PartyA\"", json);
@@ -68,6 +66,7 @@ public class MpesaExpressPayloadTests
         Assert.Contains("\"CallBackURL\"", json);
         Assert.Contains("\"AccountReference\"", json);
         Assert.Contains("\"TransactionDesc\"", json);
+        Assert.Contains("\"Timestamp\"", json);
     }
 
     [Fact]
@@ -110,7 +109,6 @@ public class MpesaExpressPayloadTests
         var deserialized = JsonSerializer.Deserialize<MpesaExpressPayload>(json)!;
 
         Assert.Equal(original.BusinessShortCode, deserialized.BusinessShortCode);
-        Assert.Equal(original.Passkey, deserialized.Passkey);
         Assert.Equal(original.TransactionType, deserialized.TransactionType);
         Assert.Equal(original.Amount, deserialized.Amount);
         Assert.Equal(original.PartyA, deserialized.PartyA);
@@ -122,12 +120,12 @@ public class MpesaExpressPayloadTests
     }
 
     [Fact]
-    public void PasswordAndTimestamp_AreNullByDefault_SinceTheyAreSetInternally()
+    public void PasswordAndTimestamp_DefaultToEmptyStrings_SinceTheyAreSetInternally()
     {
         // Password and Timestamp have internal setters - they are set by MpesaExpress.InitiateStkPush
         var payload = CreateValidPayload();
 
-        Assert.Null(payload.Password);
-        Assert.Null(payload.Timestamp);
+        Assert.Equal(string.Empty, payload.Password);
+        Assert.Equal(string.Empty, payload.Timestamp);
     }
 }

@@ -11,18 +11,18 @@ public class DarajaError
     ///     Unique identifier for the request that resulted in the error.
     /// </summary>
     [JsonPropertyName("requestId")]
-    public required string? RequestId { get; set; }
+    public required string? RequestId { get; init; }
 
     /// <summary>
     ///     Daraja API response error code.
     /// </summary>
     [JsonPropertyName("errorCode")]
-    public required string ErrorCode { get; set; }
+    public required string ErrorCode { get; init; }
 
     /// <summary>
     ///     Description of the error that occurred during the API request.
     /// </summary>
     [JsonPropertyName("errorMessage")]
-    public required string ErrorMessage { get; set; }
+    public required string ErrorMessage { get; init; }
 }
 

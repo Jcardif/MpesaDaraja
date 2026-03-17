@@ -9,7 +9,7 @@ public class MpesaExpressQueryResponse
     ///     This is a numeric status code that indicates the status of the transaction submission.
     ///     O means successful submission and any other code means an error occurred.
     /// </summary>
-    public string ResponseCode { get; set; }
+    public string? ResponseCode { get; init; }
 
 
     /// <summary>
@@ -17,28 +17,28 @@ public class MpesaExpressQueryResponse
     ///     request submission usually maps to a specific ResponseCode value.
     ///     It can be a "Success" submission message or an error description.
     /// </summary>
-    public string ResponseDescription { get; set; }
+    public string? ResponseDescription { get; init; }
 
     /// <summary>
     ///     This is a global unique Identifier for any submitted payment request.
     /// </summary>
-    public string MerchantRequestID { get; set; }
+    public string? MerchantRequestID { get; init; }
 
     /// <summary>
     ///     This is a global unique identifier of the processed checkout transaction request.
     /// </summary>
-    public string CheckoutRequestID { get; set; }
+    public string? CheckoutRequestID { get; init; }
 
     /// <summary>
     ///     This is a numeric status code that indicates the status of the transaction processing.
     ///     0 means successful processing and any other code means an error occurred or the transaction failed.
     /// </summary>
-    public string ResultCode { get; set; }
+    public string? ResultCode { get; init; }
 
     /// <summary>
     ///     Result description is a message from the API that gives the status of the request processing,
     ///     usually maps to a specific ResultCode value.
     ///     It can be a success processing message or an error description message.
     /// </summary>
-    public string ResultDesc { get; set; }
+    public string? ResultDesc { get; init; }
 }

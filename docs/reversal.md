@@ -1,32 +1,20 @@
 # Transaction Reversal
 
+<!-- markdownlint-configure-file { "MD013": false, "MD060": false } -->
+
 Reverse a completed C2B M-Pesa transaction.
 
 ## Usage
 
 ```csharp
-var reversal = new Reversal(gateway, initiatorPassword);
-
-var payload = new ReversalPayload
+app.MapPost("/reversal", async (ReversalPayload payload, Reversal reversal, CancellationToken cancellationToken) =>
 {
-    Initiator = "testapi",
-    TransactionId = "OEI2AK4Q16",
-    Amount = 1,
-    ReceiverParty = 600978,
-    ResultUrl = new Uri("https://mydomain.com/reversal/result"),
-    QueueTimeOutUrl = new Uri("https://mydomain.com/reversal/timeout"),
-    Remarks = "Reversal request"
-};
-
-var result = await reversal.ReverseTransactionAsync(payload);
-
-if (result.IsSuccess)
-{
-    Console.WriteLine($"ConversationId: {result.Value!.ConversationId}");
-}
+    var result = await reversal.ReverseTransactionAsync(payload, cancellationToken);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
 ```
 
-The SDK automatically generates the `SecurityCredential` by encrypting `initiatorPassword` with the M-Pesa public key certificate (sandbox or production, based on your gateway config) using RSA PKCS#1 v1.5.
+The SDK automatically generates the `SecurityCredential` by encrypting `InitiatorPassword` from the root `Daraja` configuration with the M-Pesa public key certificate (sandbox or production, based on your gateway config) using RSA PKCS#1 v1.5. Enable reversal support during registration with `.WithReversal()`.
 
 ## Payload Properties
 

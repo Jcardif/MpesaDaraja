@@ -12,11 +12,16 @@ public interface IMpesaExpress
     ///     Initiate a payment authorization prompt to a customer whose phone number is registered and active on M-PESA
     /// </summary>
     /// <returns></returns>
-    Task<DarajaResult<MpesaExpressResponse>> InitiateStkPush(MpesaExpressPayload payload);
+    Task<DarajaResult<MpesaExpressResponse>> InitiateStkPush(
+        MpesaExpressPayload payload,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Check the status of a previously initiated M-Pesa Express (STK Push)
     /// </summary>
     /// <returns></returns>
-    Task<DarajaResult<MpesaExpressQueryResponse>> QueryStkPushStatus(long businessShortCode, string checkoutRequestId);
+    Task<DarajaResult<MpesaExpressQueryResponse>> QueryStkPushStatus(
+        long businessShortCode,
+        string checkoutRequestId,
+        CancellationToken cancellationToken = default);
 }

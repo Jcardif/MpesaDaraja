@@ -1,5 +1,7 @@
 # Error Handling
 
+<!-- markdownlint-configure-file { "MD013": false, "MD060": false } -->
+
 ## DarajaResult\<T>
 
 All API methods return `DarajaResult<T>` — check `IsSuccess` before accessing the response.

@@ -11,12 +11,13 @@ public class MpesaExpressPayload
     public required int BusinessShortCode { get; set; }
 
     /// <summary>
-    ///     Passkey for encryption of the password parameter.
+    ///     Base64 encoded string used for encrypting the request. Format: base64.encode(Shortcode+Passkey+Timestamp).
+    ///     This value is populated by the SDK immediately before the request is sent.
     /// </summary>
-    public required string Passkey { get; set; }
+    public string Password { get; internal set; } = string.Empty;
 
     /// <summary>
-    ///
+    ///     Identifies the transaction type. Use "CustomerPayBillOnline" for PayBill Numbers and "CustomerBuyGoodsOnline" for Till Numbers.
     /// </summary>
     public required TransactionType TransactionType { get; set; }
 
@@ -54,16 +55,11 @@ public class MpesaExpressPayload
     /// <summary>
     ///     Additional information/comment for the request. Max 13 characters.
     /// </summary>
-    public string TransactionDesc { get; set; }
+    public string TransactionDesc { get; set; } = string.Empty;
 
-    /// <summary>
-    ///     Base64 encoded string used for encrypting the request. Format: base64.encode(Shortcode+Passkey+Timestamp).
-    /// </summary>
-    public string Password { get; internal set; }
 
     /// <summary>
     ///     Timestamp of the transaction in the format YYYYMMDDHHmmss.
     /// </summary>
-    public string Timestamp { get; internal set; }
+    public string Timestamp { get; internal set; } = string.Empty;
 }
-

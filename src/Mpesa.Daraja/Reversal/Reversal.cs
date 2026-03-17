@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 using Mpesa.Daraja.Auth;
 using Mpesa.Daraja.Shared;
 
@@ -17,22 +18,35 @@ public class Reversal
     private readonly string _initiatorPassword;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Reversal"/>
+    ///     Initializes a new instance of the <see cref="Reversal"/> class for dependency injection scenarios.
     /// </summary>
-    /// <param name="gateway"></param>
-    /// <param name="initiatorPassword"></param>
+    /// <param name="gateway">The authenticated Daraja gateway used to send requests.</param>
+    /// <param name="options">The Daraja configuration containing the initiator password.</param>
+    public Reversal(DarajaGateway gateway, IOptions<DarajaOptions> options)
+    {
+        _gateway = gateway;
+        _initiatorPassword = options.Value.InitiatorPassword;
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Reversal"/> class with an explicit initiator password.
+    /// </summary>
+    /// <param name="gateway">The authenticated Daraja gateway used to send requests.</param>
+    /// <param name="initiatorPassword">The initiator password used to generate the security credential.</param>
     public Reversal(DarajaGateway gateway, string initiatorPassword)
     {
         _gateway = gateway;
         _initiatorPassword = initiatorPassword;
     }
 
-
     /// <summary>
     ///     Reverse a C2B transaction
     /// </summary>
     /// <param name="payload"></param>
-    public async Task<DarajaResult<ReversalResponse>> ReverseTransactionAsync(ReversalPayload payload)
+    /// <param name="cancellationToken">Cancels the reversal operation.</param>
+    public async Task<DarajaResult<ReversalResponse>> ReverseTransactionAsync(
+        ReversalPayload payload,
+        CancellationToken cancellationToken = default)
     {
         var securityCredential = GenerateSecurityCredential();
         payload.SecurityCredential = securityCredential;
@@ -40,10 +54,12 @@ public class Reversal
         var jsonPayload = JsonSerializer.Serialize(payload);
         var httpContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-        await _gateway.EnsureAuthenticatedAsync();
-
-        var response = await _gateway.HttpClient.PostAsync("mpesa/reversal/v1/request", httpContent);
-        var content = await response.Content.ReadAsStringAsync();
+        using var response = await _gateway.SendAuthenticatedRequestAsync(
+            HttpMethod.Post,
+            "mpesa/reversal/v1/request",
+            httpContent,
+            cancellationToken);
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
         if (response.IsSuccessStatusCode)
         {

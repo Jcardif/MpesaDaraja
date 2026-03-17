@@ -13,12 +13,12 @@ public class ReversalPayload
     /// <summary>
     ///     Encrypted password for the API user
     /// </summary>
-    public string SecurityCredential { get; internal set; }
+    public string SecurityCredential { get; internal set; } = string.Empty;
 
     /// <summary>
     ///     Only 'TransactionReversal' is allowed
     /// </summary>
-    public string CommandId { get; } = "TransactionReversal";
+    internal string CommandId => "TransactionReversal";
 
     /// <summary>
     ///     M-PESA Receipt Number for the transaction being reversed
@@ -38,20 +38,20 @@ public class ReversalPayload
     /// <summary>
     ///     Type of Organization (should be '11')
     /// </summary>
-    public long RecieverIdentifierType { get; } = 11;
+    internal long RecieverIdentifierType => 11;
 
     /// <summary>
     ///     URL for result notification
     /// </summary>
-    public Uri ResultUrl { get; set; }
+    public Uri? ResultUrl { get; set; }
 
     /// <summary>
     ///     URL for timeout notification
     /// </summary>
-    public Uri QueueTimeOutUrl { get; set; }
+    public Uri? QueueTimeOutUrl { get; set; }
 
     /// <summary>
     ///     Additional information (2-100 characters)
     /// </summary>
-    public string Remarks { get; set; }
+    public string? Remarks { get; set; }
 }

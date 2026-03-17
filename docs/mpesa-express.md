@@ -1,32 +1,17 @@
 # M-Pesa Express (STK Push)
 
+<!-- markdownlint-configure-file { "MD013": false, "MD060": false } -->
+
 Merchant-initiated C2B payment. Sends a USSD payment prompt to the customer's phone.
 
 ## Initiate STK Push
 
 ```csharp
-var mpesaExpress = new MpesaExpress(gateway, passKey);
-
-var payload = new MpesaExpressPayload
+app.MapPost("/stkpush", async (MpesaExpressPayload payload, IMpesaExpress mpesaExpress, CancellationToken cancellationToken) =>
 {
-    BusinessShortCode = 174379,
-    Passkey = passKey,
-    TransactionType = TransactionType.CustomerPayBillOnline,
-    Amount = 1,
-    PartyA = "254708374149",
-    PartyB = "174379",
-    PhoneNumber = "254708374149",
-    CallBackURL = "https://mydomain.com/callback",
-    AccountReference = "MyApp",
-    TransactionDesc = "Payment"
-};
-
-var result = await mpesaExpress.InitiateStkPush(payload);
-
-if (result.IsSuccess)
-{
-    Console.WriteLine($"CheckoutRequestID: {result.Value!.CheckoutRequestID}");
-}
+    var result = await mpesaExpress.InitiateStkPush(payload, cancellationToken);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
 ```
 
 ## Payload Properties
@@ -49,16 +34,15 @@ if (result.IsSuccess)
 ## Query Transaction Status
 
 ```csharp
-var queryResult = await mpesaExpress.QueryStkPushStatus(
-    businessShortCode: 174379,
-    checkoutRequestId: result.Value!.CheckoutRequestID
-);
-
-if (queryResult.IsSuccess)
+app.MapPost("/stkpush/query", async (StkPushQueryRequest request, IMpesaExpress mpesaExpress, CancellationToken cancellationToken) =>
 {
-    Console.WriteLine($"ResultCode: {queryResult.Value!.ResultCode}");
-    Console.WriteLine($"ResultDesc: {queryResult.Value.ResultDesc}");
-}
+    var result = await mpesaExpress.QueryStkPushStatus(
+        request.BusinessShortCode,
+        request.CheckoutRequestId,
+        cancellationToken);
+
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
 ```
 
 ## Response Properties

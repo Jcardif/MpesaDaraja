@@ -7,8 +7,6 @@ namespace Mpesa.Daraja.Auth;
 /// </summary>
 public class DarajaToken
 {
-    private string _expiresIn;
-
     /// <summary>
     ///     Access token to access the APIs
     /// </summary>
@@ -16,15 +14,15 @@ public class DarajaToken
     public required string AccessToken { get; init; }
 
     /// <summary>
-    ///     String value for the token expiry time in seconds.
+    ///    Value for the token expiry time in seconds.
     /// </summary>
     [JsonPropertyName("expires_in")]
     public required string ExpiresIn
     {
-        get => _expiresIn;
+        get;
         init
         {
-            _expiresIn = value;
+            field = value;
             var tokenExpirySeconds = int.TryParse(value, out var seconds) ? seconds : 0;
 
             // set the next token refresh time to be 10% before the actual expiry time

@@ -8,21 +8,21 @@ internal class MpesaExpressQueryPayload
     /// <summary>
     ///     This is the organization's shortcode (Paybill or Buygoods - a 5 to 7-digit account number)
     /// </summary>
-    public required long BusinessShortCode { get; set; }
+    internal required long BusinessShortCode { get; set; }
 
     /// <summary>
-    ///     This is the password used for encrypting the request sent: a base64 encoded string.
-    ///     (The base64 string is a combination of Shortcode+Passkey+Timestamp).
+    ///     Base64 encoded string used for encrypting the request. Format: base64.encode(Shortcode+Passkey+Timestamp).
+    ///     This value is populated by the SDK immediately before the request is sent.
     /// </summary>
-    public required string Password { get; set; }
+    internal required string Password { get;  set; }
 
     /// <summary>
     ///   This is the Timestamp of the transaction
     /// </summary>
-    public required string Timestamp { get; set; }
+    internal required string Timestamp { get; set; }
 
     /// <summary>
     ///     This is a global unique identifier of the processed checkout transaction request.
     /// </summary>
-    public required string CheckoutRequestID { get; set; }
+    internal required string CheckoutRequestID { get; set; }
 }

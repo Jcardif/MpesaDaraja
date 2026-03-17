@@ -6,7 +6,7 @@ namespace Mpesa.Daraja.Shared.Exceptions;
 public class DarajaException : Exception
 {
     /// <summary>
-    ///     An instacnce of the <see cref="DarajaError"/>
+    ///     An instance of the <see cref="DarajaError"/>
     /// </summary>
     public DarajaError? Error { get; }
 
@@ -22,6 +22,7 @@ public class DarajaException : Exception
     ///     Initialize a new instance of the <see cref="DarajaException"/>
     /// </summary>
     /// <param name="message"></param>
+    /// <param name="error"></param>
     public DarajaException(string message, DarajaError error) : base(message)
     {
         Error = error;
@@ -31,6 +32,7 @@ public class DarajaException : Exception
     ///     Initialize a new instance of the <see cref="DarajaException"/>
     /// </summary>
     /// <param name="message"></param>
+    /// <param name="innerException"></param>
     public DarajaException(string message, Exception innerException) : base(message, innerException)
     {
     }

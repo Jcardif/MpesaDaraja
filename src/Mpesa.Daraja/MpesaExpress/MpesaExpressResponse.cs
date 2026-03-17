@@ -8,29 +8,29 @@ public class MpesaExpressResponse
     /// <summary>
     ///     Global unique identifier for the transaction request returned by the API proxy upon successful request submission.
     /// </summary>
-    public string MerchantRequestID { get; set; }
+    public string? MerchantRequestID { get; init; }
 
     /// <summary>
     ///     Global unique identifier for the transaction request returned by M-PESA upon successful request submission.
     /// </summary>
-    public string CheckoutRequestID { get; set; }
+    public string? CheckoutRequestID { get; init; }
 
     /// <summary>
     ///     Staus code indicating the status of the transaction submission.
     ///     0 means successful submission; any other code indicates an error.
     /// </summary>
-    public string ResponseCode { get; set; }
+    public string? ResponseCode { get; init; }
 
     /// <summary>
     ///     Acknowledgment message from the API that gives the status of the request submission,
     ///     usually mapping to a specific ResponseCode value.
     /// </summary>
-    public string ResponseDescription { get; set; }
+    public string? ResponseDescription { get; init; }
 
     /// <summary>
     ///     Message intended for the customer, usually confirming the status of the request.
     /// </summary>
-    public string CustomerMessage { get; set; }
+    public string? CustomerMessage { get; init; }
 }
 
 

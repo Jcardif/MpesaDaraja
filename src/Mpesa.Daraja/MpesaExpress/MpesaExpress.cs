@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 using Mpesa.Daraja.Auth;
 using Mpesa.Daraja.Shared;
 
@@ -12,19 +13,31 @@ public class MpesaExpress : IMpesaExpress
     private readonly string _passKey;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="MpesaExpress"/> class.
+    ///     Initializes a new instance of the <see cref="MpesaExpress"/> class for dependency injection scenarios.
     /// </summary>
-    /// <param name="gateway"></param>
-    /// <param name="passKey"></param>
-    public MpesaExpress(DarajaGateway gateway , string passKey)
+    /// <param name="gateway">The authenticated Daraja gateway used to send requests.</param>
+    /// <param name="options">The Daraja configuration containing the M-Pesa Express passkey.</param>
+    public MpesaExpress(DarajaGateway gateway, IOptions<DarajaOptions> options)
+    {
+        _gateway = gateway;
+        _passKey = options.Value.PassKey;
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="MpesaExpress"/> class with an explicit passkey.
+    /// </summary>
+    /// <param name="gateway">The authenticated Daraja gateway used to send requests.</param>
+    /// <param name="passKey">The M-Pesa Express passkey.</param>
+    public MpesaExpress(DarajaGateway gateway, string passKey)
     {
         _gateway = gateway;
         _passKey = passKey;
     }
 
-
     /// <inheritdoc />
-    public async Task<DarajaResult<MpesaExpressResponse>> InitiateStkPush(MpesaExpressPayload payload)
+    public async Task<DarajaResult<MpesaExpressResponse>> InitiateStkPush(
+        MpesaExpressPayload payload,
+        CancellationToken cancellationToken = default)
     {
         var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
         var inputPassword = $"{payload.BusinessShortCode}{_passKey}{timestamp}";
@@ -36,10 +49,12 @@ public class MpesaExpress : IMpesaExpress
         var jsonPayload = JsonSerializer.Serialize(payload);
         var httpContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-        await _gateway.EnsureAuthenticatedAsync();
-
-        var response = await _gateway.HttpClient.PostAsync("mpesa/stkpush/v1/processrequest", httpContent);
-        var content = await response.Content.ReadAsStringAsync();
+        using var response = await _gateway.SendAuthenticatedRequestAsync(
+            HttpMethod.Post,
+            "mpesa/stkpush/v1/processrequest",
+            httpContent,
+            cancellationToken);
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
         if (response.IsSuccessStatusCode)
         {
@@ -78,8 +93,10 @@ public class MpesaExpress : IMpesaExpress
     }
 
     /// <inheritdoc />
-    public async Task<DarajaResult<MpesaExpressQueryResponse>> QueryStkPushStatus(long businessShortCode,
-        string checkoutRequestId)
+    public async Task<DarajaResult<MpesaExpressQueryResponse>> QueryStkPushStatus(
+        long businessShortCode,
+        string checkoutRequestId,
+        CancellationToken cancellationToken = default)
     {
         var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
         var passwordInput = $"{businessShortCode}{_passKey}{timestamp}";
@@ -96,9 +113,12 @@ public class MpesaExpress : IMpesaExpress
         var jsonPayload = JsonSerializer.Serialize(payload);
         var httpContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-        await _gateway.EnsureAuthenticatedAsync();
-        var response = await _gateway.HttpClient.PostAsync("mpesa/stkpushquery/v1/query", httpContent);
-        var content = await response.Content.ReadAsStringAsync();
+        using var response = await _gateway.SendAuthenticatedRequestAsync(
+            HttpMethod.Post,
+            "mpesa/stkpushquery/v1/query",
+            httpContent,
+            cancellationToken);
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
         if (response.IsSuccessStatusCode)
         {
@@ -136,4 +156,3 @@ public class MpesaExpress : IMpesaExpress
 
     }
 }
-

@@ -1,5 +1,7 @@
 # M-Pesa Daraja SDK
 
+<!-- markdownlint-configure-file { "MD013": false } -->
+
 [![CI](https://github.com/Jcardif/MpesaDaraja/actions/workflows/ci.yml/badge.svg)](https://github.com/Jcardif/MpesaDaraja/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/MpesaDarajaSDK.svg)](https://www.nuget.org/packages/MpesaDarajaSDK/)
 
@@ -15,35 +17,39 @@ dotnet add package MpesaDarajaSDK
 
 ```csharp
 using Mpesa.Daraja;
-using Mpesa.Daraja.Auth;
+using Scalar.AspNetCore;
 
-// Initialize gateway (isLive: true for production)
-using var gateway = new DarajaGateway(consumerKey, consumerSecret, isLive: false);
-await gateway.InitializeDarajaAsync();
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddUserSecrets<Program>(optional: true);
+builder.Services.AddOpenApi();
 
-// STK Push
-var mpesaExpress = new MpesaExpress(gateway, passKey);
-var payload = new MpesaExpressPayload
+builder.Services
+    .AddMpesaDaraja(options => builder.Configuration.GetSection("Daraja").Bind(options))
+    .WithMpesaExpress();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    BusinessShortCode = 174379,
-    Passkey = passKey,
-    TransactionType = TransactionType.CustomerPayBillOnline,
-    Amount = 1,
-    PartyA = "254708374149",
-    PartyB = "174379",
-    PhoneNumber = "254708374149",
-    CallBackURL = "https://mydomain.com/callback",
-    AccountReference = "MyApp",
-    TransactionDesc = "Payment"
-};
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
 
-var result = await mpesaExpress.InitiateStkPush(payload);
+app.MapPost("/stkpush", async (MpesaExpressPayload payload, IMpesaExpress mpesaExpress, CancellationToken cancellationToken) =>
+{
+    var result = await mpesaExpress.InitiateStkPush(payload, cancellationToken);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
 
-if (result.IsSuccess)
-    Console.WriteLine($"CheckoutRequestID: {result.Value!.CheckoutRequestID}");
-else
-    Console.WriteLine($"Error: {result.Error!.ErrorMessage}");
+app.Run();
 ```
+
+For local development, prefer user secrets. The sample includes [`appsettings.example.json`](/Users/joshn/source/repos/Jcardif/MpesaDaraja/samples/Mpesa.Daraja.Sample/appsettings.example.json) as a template if you need a local `appsettings.json`, but do not commit real Daraja credentials.
+
+The sample app in [`samples/Mpesa.Daraja.Sample`](/Users/joshn/source/repos/Jcardif/MpesaDaraja/samples/Mpesa.Daraja.Sample) shows the full minimal API setup for STK push, STK query, and reversal. In development it exposes:
+
+- OpenAPI JSON at `/openapi/v1.json`
+- Scalar API reference at `/scalar/v1`
 
 ## Supported APIs
 
@@ -53,9 +59,12 @@ else
 
 ## Features
 
-- **Sandbox & Production** — Switch with a single constructor flag
+- **ASP.NET Core DI** — Register the SDK with `AddMpesaDaraja(...).WithMpesaExpress().WithReversal()`
+- **Scalar-ready sample** — The sample app exposes OpenAPI and a Scalar API reference UI
+- **Sandbox & Production** — Switch environments with a single configuration flag
 - **Result types** — All API calls return `DarajaResult<T>` for clean error handling
 - **Auto token refresh** — Tokens are refreshed automatically before expiry
+- **Cancellation-aware APIs** — Outbound calls honor request cancellation tokens
 
 ## Documentation
 
